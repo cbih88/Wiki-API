@@ -58,21 +58,7 @@ app.route("/articles")
             res.send(err);
         }
     });
-})
-
-.put(function(req, res){
-    Article.update(
-        {title: req.params.articleTitle},
-        {title: req.body.title, content: req.body.content},
-        {overwrite: true},
-        function(err){
-            if(!err){
-                res.send("Successfully updated article.");
-            }
-        }
-    );
 });
-
 
 ///////////////////////////////////////////////////Requests Targetting A Specific Articles////////////////////////
 app.route("/articles/:articleTitle")
@@ -85,7 +71,48 @@ app.route("/articles/:articleTitle")
             console.log("No articles matching that title was found.");
         }
     });
-});
+})
+
+.put((req, res) => {
+    Article.findOneAndUpdate(
+      { title: req.params.articleTitle },
+      { title: req.body.title, content: req.body.content },
+      { overwrite: true },
+      (err) => {
+        if (!err) {
+          res.send("Seccessfully updated article.");
+        }
+      }
+    );
+  })
+
+  .patch(function(req, res){
+
+    Article.updateOne(
+        { title: req.params.articleTitle },
+        req.body,
+        function(err){
+            if(!err){
+                res.send("Successfully updated article.");
+            }else{
+                res.send(err);
+            }
+        }
+    );
+  })
+
+  .delete(function(req, res){
+    Article.deleteOne(
+        {title: req.params.articleTitle},
+        function(err){
+            if(!err){
+                res.send("Successfully deleted the corresponding article.");
+            }else{
+                res.send(err);
+            }
+        }
+    );
+  });
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
